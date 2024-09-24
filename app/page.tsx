@@ -1,101 +1,93 @@
-import Image from "next/image";
+export const dynamic = "force-dynamic";
 
-export default function Home() {
+import PositionStand from "./(ui)/position-stand";
+
+import ChatComponent from "./(ui)/chat-component";
+
+import { shuffleContestants } from "@/lib/actions";
+import ShuffleButton from "./(ui)/shuffle-button";
+import prisma from "@/lib/server/prisma";
+import UserTable from "./points/(ui)/user-table";
+import { Suspense } from "react";
+
+const fetchStudents = async () => {
+  const data = await prisma.student.findMany();
+  return data;
+};
+
+const fetchContestants = async () => {
+  const data = await prisma.trivia.findMany();
+  return data;
+};
+
+export default async function Home() {
+  const studentData = await fetchStudents();
+  const contestantData = await fetchContestants();
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div
+      className=" w-full h-screen space-x-5 p-5 flex 
+     "
+    >
+      <div className=" w-[40%]">
+        {contestantData.length > 0 ? (
+          <ChatComponent />
+        ) : (
+          <div className=" w-[80%] h-full mx-auto flex flex-col items-center justify-center text-center space-y-8">
+            <h1
+              className=" font-bold
+               text-4xl"
+            >
+              Welcome to AI Trivia
+            </h1>
+            <p>
+              The rules of the games are thus. Once the game is started 5 random
+              contenstants will be selected for the trivia. Each contestant will
+              be asked 4 riddles each. For each riddle a contestant answers
+              correctly he / she is awarded 10 points.
+            </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <form action={shuffleContestants} className=" w-full mx-auto">
+              <ShuffleButton />
+            </form>
+          </div>
+        )}
+      </div>
+
+      <div
+        className=" p-5 w-[60%] h-full rounded-xl border-2 overflow-hidden
+      "
+      >
+        <h1 className=" mb-6 font-semibold text-2xl">Leaderboard</h1>
+        <div className=" w-full   h-[60%] overflow-hidden gap-x-4 ">
+          {contestantData.length > 0 ? (
+            <div className=" grid gap-x-2 grid-cols-5 h-full w-full p-3 rounded-xl border-2">
+              {contestantData.map((item, index) => (
+                <PositionStand
+                  key={index}
+                  name={`${item.firstname} ${item.lastname}`}
+                  points={item.points}
+                  rank={1}
+                  color="bg-blue-300"
+                  image={item.imageUrl}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className=" w-full h-full  text-center flex items-center justify-center">
+              <h1 className=" text-3xl font-semibold">
+                The game is yet to Begin. Waiting for Selected Contestants{" "}
+              </h1>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className=" w-full h-[40%] overflow-y-scroll mt-6 pb-[5vh]">
+          <Suspense fallback={<p>Fetching All Registrations...</p>}>
+            <UserTable users={studentData} />
+          </Suspense>
+        </div>
+      </div>
     </div>
   );
 }
