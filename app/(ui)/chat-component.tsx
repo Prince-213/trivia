@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import {
   File,
   Infinity,
@@ -14,12 +13,6 @@ import FadeUpIntro from "./animations/fadeupintro";
 import Type from "./animations/type";
 
 import AskTrivia from "./ask-trivia";
-
-const fetchData = async () => {
-  const response = axios.get("http://localhost:3000/chat");
-  const data = await response;
-  return data.data;
-};
 
 /* export async function askTrivia() {
   // First fetch request to localhost:3001
@@ -52,8 +45,6 @@ const fetchData = async () => {
 } */
 
 const ChatComponent = async () => {
-  const converseData = await fetchData();
-
   return (
     <div
       className=" 
@@ -74,7 +65,7 @@ const ChatComponent = async () => {
         </header>
         <main className=" px-10 py-4 h-[90%]  ">
           <div className=" h-full flex flex-col justify-between ">
-            {converseData.map((item: any, index: number) => {
+            {[1, 2].map((item, index: number) => {
               return (
                 <div
                   key={index}
@@ -86,7 +77,7 @@ const ChatComponent = async () => {
                         <Image src={bot} width={40} height={40} alt="" />
                         <div className=" w-full  overflow-hidden">
                           <p className=" text-gray-600 text-base font-medium  ">
-                            <Type content={item.bot} />
+                            <Type content={"Hello there how are you"} />
                           </p>
                         </div>
                       </div>
@@ -95,7 +86,7 @@ const ChatComponent = async () => {
 
                   <FadeUpIntro delay={0.4}>
                     <div className=" flex items-center space-x-3">
-                      <p>{item.user}</p>
+                      <p>{"I'm quite good actually how are you"}</p>
                       <Image src={reply} width={100} height={100} alt="" />
                     </div>
                   </FadeUpIntro>
