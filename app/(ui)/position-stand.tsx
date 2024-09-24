@@ -32,7 +32,7 @@ const PositionStand = ({
         } ${color} `}
       >
         <div className=" text-center space-y-1">
-          {/* {points > 0 && <h2 className=" font-semibold">{rank}</h2>} */}
+          {points > 0 && <h2 className=" font-semibold">{rank}</h2>}
           <button className=" bg-white/30 rounded-full px-2 font-semibold border-2 text-sm">
             {points} PTS
           </button>
