@@ -43,6 +43,8 @@ export async function addStudent(formData: FormData) {
       }
     });
 
+    revalidatePath("/");
+
     console.log("Student created successfully!");
   } catch (error) {
     console.log(error);
